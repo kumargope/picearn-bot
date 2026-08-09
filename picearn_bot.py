@@ -19,16 +19,23 @@ groq_client = Groq(api_key=GROQ_API_KEY)
 
 HISTORY_FILE = "history.txt"
 
-# ---------------- HISTORY TRACKING FUNCTIONS ----------------
+# अलग-अलग कैटेगरी की लिस्ट ताकि हर बार सब्जेक्ट चेंज हो
+CATEGORIES = [
+    "A portrait of a person from history or a fantasy figure",
+    "A landscape with mountains, rivers, oceans, or waterfalls",
+    "A cozy indoor still life with vintage items, flowers, or books",
+    "A bustling city street, ancient market, or Venetian canal",
+    "A serene nature scene like a deep forest, sunflower field, or autumn park",
+    "A dramatic sea storm with ships, lighthouses, or rocky shores"
+]
+
 def load_history():
-    """History text file se purane prompts load karta hai"""
     if not os.path.exists(HISTORY_FILE):
         return set()
     with open(HISTORY_FILE, "r", encoding="utf-8") as f:
         return set(line.strip().lower() for line in f if line.strip())
 
 def save_to_history(prompt_text):
-    """Naye generated prompt ko history.txt me add karta hai"""
     with open(HISTORY_FILE, "a", encoding="utf-8") as f:
         f.write(f"{prompt_text.strip()}\n")
 
@@ -42,18 +49,21 @@ def clean_string(text):
     return " ".join(text.split())
 
 def generate_unique_theme(history_set):
-    """Groq AI se ek naya aur unique oil painting theme maangta hai jo history me na ho"""
+    # हर बार एक अलग रैंडम कैटेगरी चुनो
+    chosen_category = random.choice(CATEGORIES)
+    
     for attempt in range(5):
         idea_prompt = (
-            "Generate a unique, vivid, and highly detailed visual idea for a classical fine art oil painting. "
-            "It can be landscapes, portraits, still life, ocean views, mythical scenes, or historical architectures. "
-            "Output ONLY the 1-sentence painting concept."
+            f"Generate a unique, colorful, and vivid concept for a classical oil painting. "
+            f"The theme MUST be based on this category: '{chosen_category}'. "
+            f"Make sure it is visually unique and different from previous paintings. "
+            f"Output ONLY the 1-sentence painting description."
         )
         try:
             res = groq_client.chat.completions.create(
                 messages=[{"role": "user", "content": idea_prompt}],
                 model="llama-3.1-8b-instant",
-                temperature=0.9
+                temperature=0.95
             )
             theme = clean_string(res.choices[0].message.content)
             if theme.lower() not in history_set and len(theme) > 10:
@@ -62,20 +72,28 @@ def generate_unique_theme(history_set):
             print(f"⚠️ Groq Theme Generation Error: {e}")
             break
             
-    # Fallback unique concept using random seeds
-    backup_themes = [
-        f"Gothic Cathedral in thunderstorm with dramatic lightning reflections on wet cobblestones {random.randint(100,999)}",
-        f"Serene Japanese Zen garden with cherry blossoms and Koi fish pond {random.randint(100,999)}",
-        f"Venetian Masquerade Ball inside illuminated grand palace hall {random.randint(100,999)}",
-        f"Lighthouse on stormy ocean cliffs during heavy waves {random.randint(100,999)}"
+    # Varied Backups (अगर AI फ़ेल भी हो जाए तो भी कभी सेम फ़ोटो नहीं बनेगी)
+    diverse_backups = [
+        "A peaceful Venetian canal with gondolas reflecting sunset colors",
+        "A blooming sunflower field under a bright golden morning sun",
+        "A royal Renaissance noblewoman in an elegant silk gown",
+        "A rustic wooden table with fruits, wine bottle, and candle glow",
+        "A vibrant tropical beach with palm trees and ocean waves at dusk",
+        "A magical misty forest with rays of sunlight breaking through trees",
+        "A cozy Parisian street cafe illuminated by warm evening lanterns",
+        "A snow-capped Alpine mountain peak glowing under sunrise light",
+        "An ancient Indian palace courtyard with peacocks and fountains",
+        "A vintage steam train crossing a stone bridge over a green valley"
     ]
-    for bt in backup_themes:
+    
+    random.shuffle(diverse_backups)
+    for bt in diverse_backups:
         if bt.lower() not in history_set:
             return bt
-    return f"Timeless Classical Masterpiece Artwork {random.randint(1000, 9999)}"
+            
+    return f"A unique fine art painting of {chosen_category} {random.randint(1000, 9999)}"
 
 def post_to_pinterest_direct(title, description, destination_url, image_url, retries=2):
-    """Pinterest Direct Session with Auto-Retry on Timeout"""
     session = requests.Session()
     session.cookies.set("_pinterest_sess", PINTEREST_SESS_COOKIE, domain=".pinterest.com")
     
@@ -135,11 +153,9 @@ def post_to_pinterest_direct(title, description, destination_url, image_url, ret
     return False
 
 def generate_and_upload(index, history_set):
-    # 1. Fetch 100% Unique Theme using History Check
     selected_theme = generate_unique_theme(history_set)
     print(f"\n🎨 [{index}/5] Generating Content for NEW Theme: '{selected_theme}'...")
     
-    # 2. SEO Description
     desc_prompt = f"Write a comprehensive, engaging SEO description of AT LEAST 150 WORDS for a classical oil painting depicting '{selected_theme}'. Describe brushstrokes, lighting, and texture. End with hashtags #oilpainting #artgallery #fineart #wallart #masterpiece."
 
     try:
@@ -151,7 +167,6 @@ def generate_and_upload(index, history_set):
     except Exception:
         description_text = f"Immerse yourself in the timeless beauty of this exquisite classical oil painting capturing {selected_theme}. Hand-crafted with meticulous detail, this masterpiece showcases dramatic brushwork, vivid color palettes, and captivating lightplay on textured canvas. #oilpainting #fineart #artgallery #classicalart #wallart #masterpiece"
 
-    # 3. SEO Title
     title_prompt = f"Create a short SEO title (5-7 words) for an oil painting about '{selected_theme}'. Output ONLY the title."
     try:
         res_title = groq_client.chat.completions.create(
@@ -167,7 +182,7 @@ def generate_and_upload(index, history_set):
 
     print(f"🖼️ Title: {title_text}")
 
-    # Seed addition ensures 100% new image generation from Pollinations AI
+    # Seed + Prompt combination ensures 100% unique visual generation
     seed = random.randint(100000, 999999)
     full_art_prompt = f"authentic fine art oil painting on textured canvas, thick impasto brushstrokes, palette knife technique, masterpiece fine art, vibrant colors, realistic oil paint shine, {selected_theme}"
     image_prompt = requests.utils.quote(full_art_prompt)
@@ -199,18 +214,15 @@ def generate_and_upload(index, history_set):
         "mime_type": "image/jpeg"
     }]
 
-    # Upload to PicEarn
     response = requests.post(SUPABASE_URL, headers=headers, json=payload)
 
     if response.status_code in [200, 201]:
         print(f"🚀 SUCCESS! Posted to PicEarn: {title_text}")
         print(f"🔗 Download Link: {download_url}")
         
-        # Save to local history set & file
         save_to_history(selected_theme)
         history_set.add(selected_theme.lower())
         
-        # Auto-post to Pinterest
         post_to_pinterest_direct(
             title=title_text,
             description=description_text,
