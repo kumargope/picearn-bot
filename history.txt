@@ -145,3 +145,8 @@ A unique fine art painting of A dramatic sea storm with ships, lighthouses, or r
 A unique fine art painting of A landscape with mountains, rivers, oceans, or waterfalls 5108
 A unique fine art painting of A portrait of a person from history or a fantasy figure 8316
 A unique fine art painting of A dramatic sea storm with ships, lighthouses, or rocky shores 8124
+A unique fine art painting of A cozy indoor still life with vintage items, flowers, or books 8196
+A unique fine art painting of A cozy indoor still life with vintage items, flowers, or books 7928
+A unique fine art painting of A landscape with mountains, rivers, oceans, or waterfalls 3820
+A unique fine art painting of A bustling city street, ancient market, or Venetian canal 5355
+A unique fine art painting of A dramatic sea storm with ships, lighthouses, or rocky shores 3405
