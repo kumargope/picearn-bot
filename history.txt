@@ -219,3 +219,8 @@ A unique fine art painting of A portrait of a person from history or a fantasy f
 A unique fine art painting of A landscape with mountains, rivers, oceans, or waterfalls 6942
 A unique fine art painting of A bustling city street, ancient market, or Venetian canal 2374
 A unique fine art painting of A cozy indoor still life with vintage items, flowers, or books 4778
+A unique fine art painting of A bustling city street, ancient market, or Venetian canal 3598
+A unique fine art painting of A cozy indoor still life with vintage items, flowers, or books 9720
+A unique fine art painting of A dramatic sea storm with ships, lighthouses, or rocky shores 2889
+A unique fine art painting of A landscape with mountains, rivers, oceans, or waterfalls 2670
+A unique fine art painting of A bustling city street, ancient market, or Venetian canal 8139
