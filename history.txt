@@ -289,3 +289,8 @@ A unique fine art painting of A portrait of a person from history or a fantasy f
 A unique fine art painting of A portrait of a person from history or a fantasy figure 3468
 A unique fine art painting of A landscape with mountains, rivers, oceans, or waterfalls 1441
 A unique fine art painting of A landscape with mountains, rivers, oceans, or waterfalls 1083
+A unique fine art painting of A serene nature scene like a deep forest, sunflower field, or autumn park 7983
+A unique fine art painting of A bustling city street, ancient market, or Venetian canal 2669
+A unique fine art painting of A cozy indoor still life with vintage items, flowers, or books 8941
+A unique fine art painting of A portrait of a person from history or a fantasy figure 3777
+A unique fine art painting of A serene nature scene like a deep forest, sunflower field, or autumn park 3773
